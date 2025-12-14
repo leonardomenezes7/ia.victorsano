@@ -37,7 +37,7 @@ export function DictationArea({ onAssistantResponse }: DictationAreaProps) {
       <button
         onClick={handleClick}
         className={cn(
-          "flex w-full items-center gap-4 rounded-2xl border px-5 py-4 transition-all",
+          "flex w-full items-center gap-3 sm:gap-4 rounded-2xl border px-3 py-3 sm:px-5 sm:py-4 transition-all",
           isRecording
             ? "border-red-400 bg-red-50"
             : "border-slate-200 bg-white hover:bg-slate-50"
@@ -45,24 +45,24 @@ export function DictationArea({ onAssistantResponse }: DictationAreaProps) {
       >
         <div
           className={cn(
-            "flex h-12 w-12 items-center justify-center rounded-full",
+            "flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-full",
             isRecording
               ? "bg-red-500 text-white"
               : "bg-slate-100 text-slate-700"
           )}
         >
           {isRecording ? (
-            <Square className="h-5 w-5" />
+            <Square className="h-4 w-4 sm:h-5 sm:w-5" />
           ) : (
-            <Mic className="h-5 w-5" />
+            <Mic className="h-4 w-4 sm:h-5 sm:w-5" />
           )}
         </div>
 
         <div className="flex flex-col text-left">
-          <span className="text-sm font-medium text-slate-900">
+          <span className="text-xs sm:text-sm font-medium text-slate-900">
             {isRecording ? "Gravando…" : "Ditado clínico"}
           </span>
-          <span className="text-sm text-slate-500">
+          <span className="text-xs sm:text-sm text-slate-500">
             {isRecording
               ? "Clique novamente para parar e enviar para a IA"
               : "Grave a consulta. A IA irá transcrever e organizar o texto."}
