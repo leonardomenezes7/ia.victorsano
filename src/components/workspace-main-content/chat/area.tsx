@@ -12,7 +12,7 @@ type ChatAreaProps = {
 }
 
 export function ChatArea({ messages }: ChatAreaProps) {
-  const fullText = "Como posso te ajudar hoje?"
+  const fullText = "Bem vindo Dr. Como posso te ajudar hoje?"
   const [typedText, setTypedText] = useState("")
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export function ChatArea({ messages }: ChatAreaProps) {
         <div className="flex-1 overflow-y-auto px-2 py-2 sm:px-6 sm:py-4">
           {messages.length === 0 ? (
             <div className="w-full pt-3 pl-3 sm:pt-6 sm:pl-6">
-              <h1 className="text-xl sm:text-3xl font-semibold text-slate-900">
+              <h1 className="text-xl sm:text-3xl font-light text-slate-900">
                 {typedText}
               </h1>
             </div>

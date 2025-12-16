@@ -14,7 +14,7 @@ export function Workspace() {
   } = useChat()
 
   return (
-    <div className="h-screen w-screen flex overflow-hidden bg-slate-100">
+    <div className="h-screen w-screen flex overflow-hidden bg-gray-100">
       <Sidebar />
 
       <MainContent>
