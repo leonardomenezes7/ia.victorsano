@@ -68,7 +68,7 @@ export function Hero() {
           <div className="p-1 rounded-full bg-slate-100/80 backdrop-blur-sm shadow-xl w-full sm:w-auto">
             <Button
               className="rounded-full w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-10 text-sm sm:text-base font-normal bg-slate-900 hover:bg-slate-800 text-white border-0 transition-all shadow-lg hover:shadow-2xl hover:-translate-y-1 group whitespace-normal sm:whitespace-nowrap"
-              onClick={() => window.open("https://tria.health", "_blank")}
+              onClick={() => window.open("", "_blank")}
             >
               <BrainCircuit className="mr-2 sm:mr-3 h-4 w-4 sm:h-5 sm:w-5 text-indigo-300 shrink-0" />
               Desenvolver IA com meus protocolos
