@@ -32,6 +32,7 @@ export function Sidebar() {
       ">
         <NavLink
           to="/workspace"
+          replace={true} // <--- ADICIONADO: Substitui o histórico em vez de empilhar
           title="Chat por Texto"
           className={({ isActive }) => cn(
             "flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-full transition-all duration-200",
@@ -45,6 +46,7 @@ export function Sidebar() {
 
         <NavLink
           to="/audio"
+          replace={true} // <--- ADICIONADO: Substitui o histórico em vez de empilhar
           title="Ditado por Áudio"
           className={({ isActive }) => cn(
             "flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-full transition-all duration-200",
@@ -57,7 +59,7 @@ export function Sidebar() {
         </NavLink>
       </nav>
 
-      {/* Avatar - Escondido no Mobile para economizar espaço */}
+      {/* Avatar */}
       <Avatar className="hidden md:flex h-10 w-10 cursor-pointer md:mt-auto">
         <img
           src="https://github.com/shadcn.png"
