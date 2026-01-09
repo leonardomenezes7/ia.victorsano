@@ -10,8 +10,14 @@ export async function sendMessageToAI(text: string) {
   })
 
   if (!response.ok) {
-    alert("Failed to fetch AI response")
+    console.error("Failed to fetch AI response")
+    return "Erro ao conectar com a IA."
   }
 
-  return response.json()
+  const data = await response.json()
+
+  // CORREÇÃO:
+  // O erro "found: object with keys {reply}" indica que o texto está dentro de data.reply
+  // Retornamos apenas a string, não o objeto inteiro.
+  return data.reply || data.output || data.message || "Resposta sem conteúdo de texto."
 }

@@ -1,74 +1,51 @@
 import { useState } from "react"
 import { sendMessageToAI } from "@/services/send-message-AI"
 
-type Message = {
-  id: string
+export interface Message {
   role: "user" | "assistant"
   content: string
 }
 
 export function useChat() {
   const [messages, setMessages] = useState<Message[]>([])
-
-  function addMessage(message: Message) {
-    setMessages(prev => [...prev, message])
-  }
-
-  function addUserMessage(text: string) {
-    addMessage({
-      id: crypto.randomUUID(),
-      role: "user",
-      content: text,
-    })
-  }
-
-  function addAssistantMessage(text: string) {
-    addMessage({
-      id: crypto.randomUUID(),
-      role: "assistant",
-      content: text,
-    })
-  }
+  const [isLoading, setIsLoading] = useState(false)
 
   async function sendMessage(text: string) {
-    addUserMessage(text)
+    if (!text.trim()) return
 
-    const assistantId = crypto.randomUUID()
+    // 1. Adiciona mensagem do usuário
+    const newMessages = [
+      ...messages,
+      { role: "user", content: text } as Message
+    ]
+    setMessages(newMessages)
+    setIsLoading(true)
 
-    addMessage({
-      id: assistantId,
-      role: "assistant",
-      content: "",
-    })
-
-    const response = await sendMessageToAI(text)
-
-    const reply = response.reply ?? "I couldn't generate a response."
-
-    await simulateAssistantTyping(assistantId, reply)
-  }
-
-  async function simulateAssistantTyping(
-    assistantId: string,
-    fullText: string
-  ) {
-    for (let i = 0; i < fullText.length; i++) {
-      await new Promise(r => setTimeout(r, 20))
-
-      setMessages(prev =>
-        prev.map(msg =>
-          msg.id === assistantId
-            ? { ...msg, content: fullText.slice(0, i + 1) }
-            : msg
-        )
-      )
+    try {
+      // 2. Envia para a IA
+      const response = await sendMessageToAI(text)
+      
+      // 3. Adiciona resposta da IA
+      if (response) {
+        setMessages([
+          ...newMessages,
+          { role: "assistant", content: response } as Message
+        ])
+      }
+    } catch (error) {
+      console.error(error)
+      setMessages([
+        ...newMessages,
+        { role: "assistant", content: "Desculpe, ocorreu um erro ao processar sua mensagem." } as Message
+      ])
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return {
     messages,
     sendMessage,
-    addAssistantMessage,
-    addUserMessage,
+    isLoading // Exportamos o estado de carregamento
   }
 }
