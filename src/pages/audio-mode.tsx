@@ -54,7 +54,7 @@ export function AudioMode() {
     <div className="h-screen w-screen flex flex-col-reverse md:flex-row overflow-hidden bg-slate-50/50">
       <Sidebar />
       <MainContent>
-        <div className="h-full flex flex-col max-w-[1600px] mx-auto w-full p-4 md:p-6 gap-4 md:gap-6">
+        <div className="h-full flex flex-col max-w-400 mx-auto w-full p-4 md:p-6 gap-4 md:gap-6">
           
           {/* Cabeçalho */}
           <div className="flex items-center justify-between shrink-0">

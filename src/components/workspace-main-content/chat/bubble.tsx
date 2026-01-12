@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils"
 import type { Message } from "@/hooks/use-chat"
 import { Copy, Check, Bot, User } from "lucide-react"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 
 interface BubbleProps {
@@ -11,38 +11,15 @@ interface BubbleProps {
 export function Bubble({ message }: BubbleProps) {
   const isUser = message.role === "user"
   const [hasCopied, setHasCopied] = useState(false)
-  
-  // Estado para controlar o texto que está sendo "digitado" na tela
-  const [displayedContent, setDisplayedContent] = useState(isUser ? message.content : "")
 
-  // Efeito de Digitação (Typewriter)
-  useEffect(() => {
-    // Se for usuário, não faz animação, mostra direto
-    if (isUser) {
-      setDisplayedContent(message.content)
-      return
-    }
-
-    // Se for IA, faz a animação
-    let currentIndex = 0
-    const fullText = message.content
-    const speed = 10 // 10ms por caractere (Rápido e Fluido)
-
-    const intervalId = setInterval(() => {
-      if (currentIndex < fullText.length) {
-        setDisplayedContent(fullText.slice(0, currentIndex + 1))
-        currentIndex++
-      } else {
-        clearInterval(intervalId)
-      }
-    }, speed)
-
-    // Limpeza do intervalo caso o componente desmonte
-    return () => clearInterval(intervalId)
-  }, [message.content, isUser])
+  // CORREÇÃO DO BUG:
+  // Se for mensagem da IA e ainda não tiver conteúdo (streaming não começou),
+  // retornamos null. Isso esconde a caixa vazia e deixa apenas o loader do ChatArea visível.
+  if (!isUser && !message.content) {
+    return null
+  }
 
   function handleCopy() {
-    // Copiamos sempre o texto completo original, não apenas o que já foi renderizado
     navigator.clipboard.writeText(message.content)
     setHasCopied(true)
     setTimeout(() => setHasCopied(false), 2000)
@@ -66,17 +43,16 @@ export function Bubble({ message }: BubbleProps) {
           ? "bg-slate-900 text-white rounded-tr-sm" 
           : "bg-white border border-slate-200 text-slate-700 rounded-tl-sm"
       )}>
-        {/* Conteúdo da Mensagem (Renderiza o texto animado) */}
+        {/* Conteúdo da Mensagem */}
+        {/* REMOVIDO: O efeito de typewriter artificial. 
+            Agora usamos o message.content direto, pois o streaming 
+            já cria o efeito visual de digitação naturalmente. */}
         <p className="whitespace-pre-wrap leading-relaxed font-normal min-h-6">
-          {displayedContent}
-          {/* Cursor piscante apenas enquanto está digitando (opcional, visual hack) */}
-          {!isUser && displayedContent.length < message.content.length && (
-            <span className="inline-block w-1 h-4 ml-1 bg-indigo-500 animate-pulse align-middle" />
-          )}
+          {message.content}
         </p>
 
-        {/* Botão de Copiar (Apenas para IA) */}
-        {!isUser && (
+        {/* Botão de Copiar (Apenas para IA e se tiver conteúdo) */}
+        {!isUser && message.content.length > 0 && (
           <div className="mt-2 flex justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-200 pt-2 border-t border-slate-100">
              <Button
                 variant="ghost"

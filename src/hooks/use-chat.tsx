@@ -13,31 +13,41 @@ export function useChat() {
   async function sendMessage(text: string) {
     if (!text.trim()) return
 
-    // 1. Adiciona mensagem do usuário
-    const newMessages = [
-      ...messages,
-      { role: "user", content: text } as Message
-    ]
-    setMessages(newMessages)
+    // 1. Cria a mensagem do Usuário
+    const userMsg: Message = { role: "user", content: text }
+    
+    // 2. Cria uma mensagem da IA "vazia" temporária para receber o texto
+    const assistantMsg: Message = { role: "assistant", content: "" }
+    
+    // Atualiza o estado com ambas (a do usuário e a vazia da IA)
+    setMessages(prev => [...prev, userMsg, assistantMsg])
     setIsLoading(true)
 
     try {
-      // 2. Envia para a IA
-      const response = await sendMessageToAI(text)
+      // 3. Chama o serviço passando a função de callback (o segundo argumento)
+      await sendMessageToAI(text, (chunk) => {
+        
+        setMessages(currentMessages => {
+          const newMessages = [...currentMessages]
+          // Pega a última mensagem (que é a da IA vazia/em construção)
+          const lastMsgIndex = newMessages.length - 1
+          
+          if (lastMsgIndex >= 0) {
+             const lastMsg = { ...newMessages[lastMsgIndex] }
+             
+             // Adiciona o pedacinho de texto que chegou
+             lastMsg.content += chunk
+             
+             newMessages[lastMsgIndex] = lastMsg
+          }
+          
+          return newMessages
+        })
+      })
       
-      // 3. Adiciona resposta da IA
-      if (response) {
-        setMessages([
-          ...newMessages,
-          { role: "assistant", content: response } as Message
-        ])
-      }
     } catch (error) {
       console.error(error)
-      setMessages([
-        ...newMessages,
-        { role: "assistant", content: "Desculpe, ocorreu um erro ao processar sua mensagem." } as Message
-      ])
+      // Opcional: Adicionar mensagem de erro visual se falhar totalmente
     } finally {
       setIsLoading(false)
     }
@@ -46,6 +56,6 @@ export function useChat() {
   return {
     messages,
     sendMessage,
-    isLoading // Exportamos o estado de carregamento
+    isLoading
   }
 }
