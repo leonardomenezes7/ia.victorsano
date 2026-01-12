@@ -51,11 +51,10 @@ export function AudioMode() {
   }
 
   return (
-    // MUDANÇA PRINCIPAL AQUI: flex-col-reverse (mobile) -> md:flex-row (desktop)
     <div className="h-screen w-screen flex flex-col-reverse md:flex-row overflow-hidden bg-slate-50/50">
       <Sidebar />
       <MainContent>
-        <div className="h-full flex flex-col max-w-400 mx-auto w-full p-4 md:p-6 gap-4 md:gap-6">
+        <div className="h-full flex flex-col max-w-[1600px] mx-auto w-full p-4 md:p-6 gap-4 md:gap-6">
           
           {/* Cabeçalho */}
           <div className="flex items-center justify-between shrink-0">
@@ -77,13 +76,15 @@ export function AudioMode() {
             )}
           </div>
 
-          {/* Área Principal - Grid Responsivo (1 col mobile -> 2 cols desktop) */}
+          {/* Área Principal */}
+          {/* CORREÇÃO 1: min-h-0 aqui impede que o grid estoure a altura da tela */}
           <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 min-h-0">
             
             {/* LADO ESQUERDO: Entrada */}
             <div className="flex flex-col bg-white rounded-2xl md:rounded-3xl border border-slate-200 shadow-sm overflow-hidden group focus-within:ring-2 focus-within:ring-slate-100 transition-all duration-300">
               
-              <div className="px-4 py-3 md:px-6 md:py-4 border-b border-slate-50 flex items-center justify-between bg-white">
+              {/* Header Card */}
+              <div className="px-4 py-3 md:px-6 md:py-4 border-b border-slate-50 flex items-center justify-between bg-white shrink-0">
                 <div className="flex items-center gap-2 text-slate-500 text-sm font-medium">
                   <div className={cn("w-2 h-2 rounded-full transition-colors", isRecording ? "bg-red-500 animate-pulse" : "bg-slate-300")} />
                   <span className="hidden sm:inline">Transcrição bruta</span>
@@ -107,22 +108,25 @@ export function AudioMode() {
                 </Button>
               </div>
 
-              <div className="flex-1 relative">
+              {/* Área de Texto (Input) */}
+              {/* CORREÇÃO 2: flex-1 e min-h-0 no container, h-full no textarea */}
+              <div className="flex-1 relative min-h-0">
                 <Textarea 
                   value={transcript}
                   onChange={(e) => setTranscript(e.target.value)}
                   placeholder="Toque em gravar e fale..."
-                  className="w-full h-full p-4 md:p-6 text-base md:text-lg text-slate-600 border-0 resize-none focus-visible:ring-0 bg-transparent placeholder:text-slate-300 font-normal leading-relaxed"
+                  className="w-full h-full p-4 md:p-6 text-base md:text-lg text-slate-600 border-0 resize-none focus-visible:ring-0 bg-transparent placeholder:text-slate-300 font-normal leading-relaxed overflow-y-auto"
                 />
                 
                 {isRecording && (
-                   <div className="absolute bottom-4 left-4 md:left-6 text-xs text-red-500 animate-pulse flex items-center gap-1.5 font-normal">
+                   <div className="absolute bottom-4 left-4 md:left-6 text-xs text-red-500 animate-pulse flex items-center gap-1.5 font-normal bg-white/80 backdrop-blur-sm px-2 py-1 rounded-full pointer-events-none">
                       <div className="w-1.5 h-1.5 bg-red-500 rounded-full" /> Gravando...
                    </div>
                 )}
               </div>
 
-              <div className="p-3 bg-slate-50/50 border-t border-slate-100 flex justify-end">
+              {/* Footer Card */}
+              <div className="p-3 bg-slate-50/50 border-t border-slate-100 flex justify-end shrink-0">
                 <Button
                   onClick={handleSendToAI}
                   disabled={!transcript || isRecording || isProcessing}
@@ -141,12 +145,12 @@ export function AudioMode() {
               </div>
             </div>
 
-            {/* LADO DIREITO: Saída - Escondido no mobile se estiver vazio para focar na gravação */}
+            {/* LADO DIREITO: Saída */}
             <div className={cn(
               "flex flex-col bg-white rounded-2xl md:rounded-3xl border border-slate-200 shadow-sm overflow-hidden",
-              !aiResponse && "hidden md:flex" // Mobile: só mostra se tiver resposta
+              !aiResponse && "hidden md:flex"
             )}>
-              <div className="px-4 py-3 md:px-6 md:py-4 border-b border-slate-50 flex items-center justify-between bg-white">
+              <div className="px-4 py-3 md:px-6 md:py-4 border-b border-slate-50 flex items-center justify-between bg-white shrink-0">
                 <div className="flex items-center gap-2 text-slate-500 text-sm font-medium">
                   <AlignLeft className="w-4 h-4 text-indigo-500/70" />
                   <span className="hidden sm:inline">Resultado formatado</span>
@@ -169,7 +173,9 @@ export function AudioMode() {
                 )}
               </div>
 
-              <div className="flex-1 p-4 md:p-6 overflow-y-auto bg-white">
+              {/* Área de Conteúdo (Output) */}
+              {/* CORREÇÃO 3: flex-1, overflow-y-auto e min-h-0 garantem o scroll interno */}
+              <div className="flex-1 p-4 md:p-6 overflow-y-auto bg-white min-h-0 scroll-smooth">
                 {aiResponse ? (
                   <div className="prose prose-slate max-w-none prose-p:font-normal prose-headings:font-normal prose-p:text-base md:prose-p:text-lg">
                     <p className="leading-relaxed text-slate-700 whitespace-pre-wrap font-normal">
